@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 
 class Cliente(models.Model):
     nome = models.CharField(max_length=255)
@@ -9,6 +10,11 @@ class Cliente(models.Model):
     def __str__(self):
         return f"{self.nome} - ({self.cpf})"
     
+    def delete(self, *args, **kwargs):
+        if self.transacao.exists():
+            raise ValidationError("Não é possível excluir um cliente com transações associadas.")
+        super().delete(*args, **kwargs)
+    
     
 class Transacao(models.Model):
     CATEGORIAS = [
@@ -18,8 +24,23 @@ class Transacao(models.Model):
         ('outros', 'Outros')
     ]
 
-    cliente =  models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='transacao')
+    cliente =  models.ForeignKey(
+        Cliente, 
+        on_delete=models.CASCADE, 
+        related_name='transacao', 
+        to_field='cpf', 
+        verbose_name='Cliente (CPF)'
+    )
     data_hora =  models.DateTimeField(auto_now_add=True, verbose_name="Data e Hora")
     valor = models.DecimalField(max_digits=10, decimal_places=2)
     descricao = models.TextField()
     categoria = models.CharField(max_length=50, choices=CATEGORIAS)
+
+    def clean(self):
+        super().clean()
+        if self.valor == 0:
+            raise ValidationError("O valor da transação deve ser diferente de zero.")
+        
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
