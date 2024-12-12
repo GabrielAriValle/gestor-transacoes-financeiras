@@ -21,6 +21,7 @@ def test_should_register_cliente(db, client):
 
 
 def test_should_register_transacao(client, test_cliente):
+
     # GIVEN
     data = {
         'cliente': test_cliente.cpf,
@@ -32,4 +33,6 @@ def test_should_register_transacao(client, test_cliente):
     
     response = client.post('/api/transacoes/', data)
     
-    assert response.status == 201
+    print(response)
+
+    assert response.status_code == 201
