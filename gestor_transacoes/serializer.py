@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from rest_framework.fields import CharField
 from gestor_transacoes.models import Cliente, Transacao
-from datetime import datetime
+import re
+
 
 
 class ErrorSerializer(serializers.Serializer):
@@ -12,12 +13,12 @@ class TransacaoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transacao
         read_only_fields = []
-        exclude = ['id']
+        exclude = ['id']    
 
-    def validar_data_hora(self, value):
-        if value > datetime.now():
-            raise serializers.ValidationError("A data e hora não podem ser no futuro.")
-        return value        
+    def validate_valor(self, value):
+        if value == 0:
+            raise serializers.ValidationError("Valor deve ser diferente de zero")
+        return value
 
 
 class ClienteSerializer(serializers.ModelSerializer):
@@ -27,9 +28,11 @@ class ClienteSerializer(serializers.ModelSerializer):
         model = Cliente
         read_only_fields = []
         exclude = ['id']
-
+   
     def validate_cpf(self, value):
-        Cliente().validar_formato_cpf(value)
+        formato_cpf_esperado = r'^\d{3}\.\d{3}\.\d{3}-\d{2}$'
+        if not re.match(formato_cpf_esperado, value):
+            raise serializers.ValidationError("CPF deve estar no formato XXX.XXX.XXX-XX.")
         return value
 
 

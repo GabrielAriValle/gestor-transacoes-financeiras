@@ -65,14 +65,14 @@ class GraficoLinhasView(APIView):
         ).order_by('data')
 
         dados_grafico = []
-        saldo_acumuado = 0
+        saldo_acumulado = 0
         for transacao in agrupamento_dia:
-            saldo_acumuado += (transacao['receitas'] or 0) + (transacao['despesas'] or 0)
+            saldo_acumulado += (transacao['receitas'] or 0) + (transacao['despesas'] or 0)
             dados_grafico.append({
                 'data': transacao['data'],
                 'receitas': transacao['receitas'] or 0,
                 'despesas': transacao['despesas'] or 0,
-                'saldo_acumuado': saldo_acumuado
+                'saldo_acumulado': saldo_acumulado
             })
 
         return Response(dados_grafico, status=status.HTTP_200_OK)

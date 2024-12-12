@@ -16,7 +16,7 @@ class TransacaoFactory(django.DjangoModelFactory):
 def test_cliente(db):
     cliente = ClienteFactory.create(
         nome = 'Fixture Teste',
-        cpf = '12345678912',
+        cpf = '123.456.789-12',
         email = 'fixture@teste.com',
         telefone = '48987654321'
     )
