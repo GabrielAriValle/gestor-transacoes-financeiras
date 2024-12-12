@@ -21,3 +21,9 @@ class ClienteSerializer(serializers.ModelSerializer):
         model = Cliente
         read_only_fields = []
         exclude = ['id']
+
+
+class GraficoLinhasSerializer(serializers.Serializer):
+    cpf = serializers.CharField(required=True, max_length=14)
+    data_inicio = serializers.DateField(required=False)
+    data_fim = serializers.DateField(required=False)
