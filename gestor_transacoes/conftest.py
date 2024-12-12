@@ -1,11 +1,15 @@
 import pytest
 
 from factory import django
-from .models import Cliente
+from .models import Cliente, Transacao
 
 class ClienteFactory(django.DjangoModelFactory):
     class Meta:
         model = Cliente
+
+class TransacaoFactory(django.DjangoModelFactory):
+    class Meta:
+        model = Transacao
 
 
 @pytest.fixture()
@@ -18,3 +22,14 @@ def test_cliente(db):
     )
     return cliente
     
+
+@pytest.fixture()
+def test_transacao(db, test_cliente):
+    transacao = TransacaoFactory.create(
+        cliente = test_cliente,
+        data_hora = '2024-12-11 21:35',
+        valor = '123.45',
+        descricao = 'Teste descricao',
+        categoria = 'alimentacao'
+    )
+    return transacao
