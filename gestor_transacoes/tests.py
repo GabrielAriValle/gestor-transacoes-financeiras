@@ -28,7 +28,7 @@ def test_should_register_transacao(client, test_cliente):
         'data_hora': '24/05/24',
         'valor': '123',
         'descricao': 'Teste',
-        'categoria': 'Alimentacao'
+        'categoria': 'alimentacao'
     }
     
     response = client.post('/api/transacoes/', data)
@@ -36,3 +36,5 @@ def test_should_register_transacao(client, test_cliente):
     print(response)
 
     assert response.status_code == 201
+
+
