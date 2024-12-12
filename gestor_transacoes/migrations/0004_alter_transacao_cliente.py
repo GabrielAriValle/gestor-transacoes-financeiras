@@ -14,6 +14,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='transacao',
             name='cliente',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='transacao', to='gestor_transacoes.cliente', to_field='cpf', verbose_name='Cliente (CPF)'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='transacao',
+                                    to='gestor_transacoes.cliente', to_field='cpf', verbose_name='Cliente (CPF)'),
         ),
     ]

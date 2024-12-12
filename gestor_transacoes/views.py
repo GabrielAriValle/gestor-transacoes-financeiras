@@ -22,13 +22,13 @@ class RelatorioGeralView(APIView):
             receitas=Sum('transacao__valor', filter=Q(transacao__valor__gt=0)),
             despesas=Sum('transacao__valor', filter=Q(transacao__valor__lt=0)),
         ).annotate(
-            saldo = F('receitas') + F('despesas')
+            saldo=F('receitas') + F('despesas')
         ).values('nome', 'cpf', 'receitas', 'despesas', 'saldo')
 
         categorias = Transacao.objects.values('categoria').annotate(
             total_receitas=Sum('valor', filter=Q(valor__gt=0)),
             total_despesas=Sum('valor', filter=Q(valor__lt=0)),
-            saldo_categoria=Sum('valor'), 
+            saldo_categoria=Sum('valor'),
         ).order_by('categoria')
 
         dados_cliente = list(cliente)
@@ -38,7 +38,7 @@ class RelatorioGeralView(APIView):
             'resumo_cliente': dados_cliente,
             'resumo_categoria': dados_categorias
         })
-    
+
 
 class GraficoLinhasView(APIView):
     def get(self, request):
@@ -46,19 +46,28 @@ class GraficoLinhasView(APIView):
         serializer.is_valid(raise_exception=True)
         filtros = serializer.validated_data
 
-        try:
-            cliente = Cliente.objects.get(cpf=filtros['cpf'])
-        except:
-            return Response({'erro': 'Cliente com este CPF nao existe'}, status=status.HTTP_404_NOT_FOUND)
-        
-        transacoes = Transacao.objects.filter(cliente=cliente)
+        if 'cpf' in filtros and filtros['cpf']:
+            try:
+                cliente = Cliente.objects.get(cpf=filtros['cpf'])
+                transacoes = Transacao.objects.filter(cliente=cliente)
+            except Cliente.DoesNotExist:
+                return Response({'erro': 'Cliente com este CPF nao existe'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            transacoes = Transacao.objects.all()
+
         if 'data_inicio' in filtros:
             transacoes = transacoes.filter(data_hora__date__gte=filtros['data_inicio'])
         if 'data_fim' in filtros:
             transacoes = transacoes.filter(data_hora__date__lte=filtros['data_fim'])
 
+        agrupamento = filtros.get('agrupamento', 'dia')
+        if agrupamento == 'dia':
+            agrupamento_data = functions.TruncDay('data_hora')
+        elif agrupamento == 'mes':
+            agrupamento_data = functions.TruncMonth('data_hora')
+
         agrupamento_dia = transacoes.annotate(
-            data=functions.TruncDay('data_hora')
+            data=agrupamento_data
         ).values('data').annotate(
             receitas=Sum('valor', filter=Q(valor__gt=0)),
             despesas=Sum('valor', filter=Q(valor__lt=0)),
@@ -76,4 +85,3 @@ class GraficoLinhasView(APIView):
             })
 
         return Response(dados_grafico, status=status.HTTP_200_OK)
-

@@ -29,8 +29,10 @@ class Migration(migrations.Migration):
                 ('data_hora', models.DateTimeField(auto_now_add=True, verbose_name='Data e Hora')),
                 ('valor', models.DecimalField(decimal_places=2, max_digits=10)),
                 ('descricao', models.TextField()),
-                ('categoria', models.CharField(choices=[('alimentacao', 'Alimentacao'), ('transporte', 'Transporte'), ('lazer', 'Lazer'), ('outros', 'Outros')], max_length=50)),
-                ('cliente', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='transacao', to='gestor_transacoes.cliente')),
+                ('categoria', models.CharField(choices=[('alimentacao', 'Alimentacao'), ('transporte', 'Transporte'),
+                                                        ('lazer', 'Lazer'), ('outros', 'Outros')], max_length=50)),
+                ('cliente', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                              related_name='transacao', to='gestor_transacoes.cliente')),
             ],
         ),
     ]

@@ -1,9 +1,7 @@
 import pytest
 
-from django.core.exceptions import ValidationError
 from django.db.models.deletion import ProtectedError
 from .conftest import TransacaoFactory
-
 
 
 def test_should_register_cliente(db, client):
@@ -49,9 +47,9 @@ def test_should_register_transacao(client, test_cliente, test_transacao):
         'descricao': test_transacao.descricao,
         'categoria': test_transacao.categoria
     }
-    
+
     response = client.post('/api/transacoes/', data)
-    
+
     assert response.status_code == 201
 
 
@@ -76,7 +74,7 @@ def test_relatorio_geral_view(client, test_cliente, test_transacao):
 
     TransacaoFactory.create(
         cliente=test_cliente,
-        data_hora = test_transacao.data_hora,
+        data_hora=test_transacao.data_hora,
         valor=-200.0,
         descricao="Nova Receita Teste",
         categoria="lazer"
@@ -96,15 +94,17 @@ def test_relatorio_geral_view(client, test_cliente, test_transacao):
     assert 'resumo_categoria' in data and len(data['resumo_categoria']) == 2
 
     categorias = data['resumo_categoria']
-    assert any(categoria['categoria'] == 'alimentacao' and categoria['total_receitas'] == 123.45 for categoria in categorias)
-    assert any(categoria['categoria'] == 'lazer' and categoria['total_despesas'] == -200.0 for categoria in categorias)
+    assert any(
+        categoria['categoria'] == 'alimentacao' and categoria['total_receitas'] == 123.45 for categoria in categorias)
+    assert any(
+        categoria['categoria'] == 'lazer' and categoria['total_despesas'] == -200.0 for categoria in categorias)
 
 
 # TO DO
 def test_grafico_linhas_view(client, test_cliente, test_transacao):
     test_transacao.cliente = test_cliente
     test_transacao.save()
-    
+
     params = {
         'cpf': test_cliente.cpf,
         'data_inicio': '2015-03-14',

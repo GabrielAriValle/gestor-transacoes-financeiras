@@ -19,3 +19,6 @@ migrate:
 
 test:
 	py.test --cov-report=term-missing --cov=. --disable-warnings
+
+code-convention:
+	flake8

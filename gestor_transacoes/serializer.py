@@ -4,7 +4,6 @@ from gestor_transacoes.models import Cliente, Transacao
 import re
 
 
-
 class ErrorSerializer(serializers.Serializer):
     mensagem = CharField()
 
@@ -13,7 +12,7 @@ class TransacaoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transacao
         read_only_fields = []
-        exclude = ['id']    
+        exclude = ['id']
 
     def validate_valor(self, value):
         if value == 0:
@@ -28,7 +27,7 @@ class ClienteSerializer(serializers.ModelSerializer):
         model = Cliente
         read_only_fields = []
         exclude = ['id']
-   
+
     def validate_cpf(self, value):
         formato_cpf_esperado = r'^\d{3}\.\d{3}\.\d{3}-\d{2}$'
         if not re.match(formato_cpf_esperado, value):
@@ -37,6 +36,7 @@ class ClienteSerializer(serializers.ModelSerializer):
 
 
 class GraficoLinhasSerializer(serializers.Serializer):
-    cpf = serializers.CharField(required=True, max_length=14)
+    cpf = serializers.CharField(required=False, max_length=14)
     data_inicio = serializers.DateField(required=False)
     data_fim = serializers.DateField(required=False)
+    agrupamento = serializers.ChoiceField(choices=['dia', 'mes'], required=False, default='dia')
