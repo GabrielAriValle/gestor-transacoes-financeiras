@@ -3,7 +3,7 @@ from rest_framework.test import APITestCase
 # Create your tests here.
 
 
-def test_should_register_cliente(cliente):
+def test_should_register_cliente(client):
     # GIVEN
     data = {
         'nome': 'teste',
@@ -13,31 +13,22 @@ def test_should_register_cliente(cliente):
     }
     
     # WHEN
-    response = cliente.post('/clientes', data)
+    response = client.post('/clientes', data)
     
     # THEN
     assert response.status == 200
 
 
-def test_should_register_transacao(transacao):
+def test_should_register_transacao(client):
     # GIVEN
     data = {
-        ''
+        'cliente': '12345678912'
+        'data_hora': ''
+        'valor': '123'
+        'descricao': 'Teste'
+        'categoria': 'Alimentacao'
     }
     
+    response = client.post('/transacoes', data)
     
-class TestsCLientTransaction(APITestCase):
-    def setUp(self):
-        url_base = '/clients'
-        
-        return super().setUp()
-    
-    def test_should_register_client(self, client):
-        # GIVEN
-        data = {'cpf': '00000000a000'}
-        
-        # WHEN
-        response = client.post(self.url_base, data)
-        
-        # THEN
-        assert response.status == 200
+    assert response.status == 200

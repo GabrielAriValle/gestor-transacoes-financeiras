@@ -16,7 +16,7 @@ class TransacaoViewSet(viewsets.ModelViewSet):
     serializer_class = TransacaoSerializer
 
 
-class RelatoriGeralView(APIView):
+class RelatorioGeralView(APIView):
     def get(self, request, *args, **kwargs):
         cliente = Cliente.objects.all().annotate(
             receitas=Sum('transacao__valor', filter=Q(transacao__valor__gt=0)),
