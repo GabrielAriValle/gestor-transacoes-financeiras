@@ -1,7 +1,7 @@
 import pytest
 
 from factory import django
-from .models import Cliente, Transacao
+from gestor_transacoes.models import Cliente, Transacao
 
 
 class ClienteFactory(django.DjangoModelFactory):
