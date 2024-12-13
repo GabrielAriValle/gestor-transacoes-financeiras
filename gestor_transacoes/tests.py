@@ -83,6 +83,7 @@ def test_relatorio_geral_view(client, test_cliente, test_transacao):
     response = client.get(f'/api/relatorio-geral/?cpf={test_cliente.cpf}')
 
     assert response.status_code == 200
+    assert str(test_cliente) == test_cliente.cpf
 
     data = response.json()
 
@@ -100,13 +101,53 @@ def test_relatorio_geral_view(client, test_cliente, test_transacao):
         categoria['categoria'] == 'lazer' and categoria['total_despesas'] == -200.0 for categoria in categorias)
 
 
-# TO DO
+def test_relatorio_geral_view_sem_cliente(client):
+    response = client.get('/api/relatorio-geral/')
+    assert response.status_code == 400
+
+
+def test_relatorio_geral_view_cliente_inexistente(db, client):
+    params = {'cpf': '000.000.000-00'}
+
+    response = client.get('/api/relatorio-geral/', params)
+
+    assert response.status_code == 404 and response.json()['erro'] == 'Cliente com este CPF nao existe'
+
+
 def test_grafico_linhas_view(client, test_cliente, test_transacao):
     test_transacao.cliente = test_cliente
     test_transacao.save()
 
     params = {
         'cpf': test_cliente.cpf,
+        'data_inicio': '2024-03-14',
+        'data_fim': '2024-12-12'
+    }
+    response = client.get('/api/grafico-linhas/', params)
+
+    assert response.status_code == 200
+
+
+def test_grafico_linhas_view_mes(client, test_cliente, test_transacao):
+    test_transacao.cliente = test_cliente
+    test_transacao.save()
+
+    params = {
+        'agrupamento': 'mes',
+        'cpf': test_cliente.cpf,
+        'data_inicio': '2015-03-14',
+        'data_fim': '2022-04-12'
+    }
+    response = client.get('/api/grafico-linhas/', params)
+
+    assert response.status_code == 200
+
+
+def test_grafico_linhas_view_sem_cliente(client, test_cliente, test_transacao):
+    test_transacao.cliente = test_cliente
+    test_transacao.save()
+
+    params = {
         'data_inicio': '2015-03-14',
         'data_fim': '2022-04-12'
     }

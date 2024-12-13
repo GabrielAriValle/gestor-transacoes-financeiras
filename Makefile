@@ -16,7 +16,6 @@ migrations:
 migrate:
 	python3 manage.py migrate
 
-
 test:
 	py.test --cov-report=term-missing --cov=. --disable-warnings
 

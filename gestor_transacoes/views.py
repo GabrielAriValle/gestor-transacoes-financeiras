@@ -34,7 +34,7 @@ class RelatorioGeralView(APIView):
             try:
                 cliente = Cliente.objects.get(cpf=cpf_cliente)
             except Cliente.DoesNotExist:
-                return Response({'erro': 'Cliente com este CPF não existe'}, status=status.HTTP_404_NOT_FOUND)
+                return Response({'erro': 'Cliente com este CPF nao existe'}, status=status.HTTP_404_NOT_FOUND)
 
             resumo_cliente = Cliente.objects.filter(cpf=cpf_cliente).annotate(
                 receitas=Sum('transacao__valor', filter=Q(transacao__valor__gt=0)),
