@@ -1,7 +1,9 @@
 import pytest
+import fakeredis
 
 from django.db.models.deletion import ProtectedError
 from .conftest import TransacaoFactory
+from unittest import mock
 
 
 def test_should_register_cliente(db, client):
@@ -67,7 +69,7 @@ def test_shouldnt_register_transacao_zerada(client, test_cliente, test_transacao
     assert response.status_code == 400
     assert response.json()['valor'] == ["Valor deve ser diferente de zero"]
 
-
+@mock.patch('django.core.cache.caches', new_callable=fakeredis.FakeStrictRedis)
 def test_relatorio_geral_view(client, test_cliente, test_transacao):
     test_transacao.cliente = test_cliente
     test_transacao.save()
@@ -100,7 +102,7 @@ def test_relatorio_geral_view(client, test_cliente, test_transacao):
     assert any(
         categoria['categoria'] == 'lazer' and categoria['total_despesas'] == -200.0 for categoria in categorias)
 
-
+@mock.patch('django.core.cache.caches', new_callable=fakeredis.FakeStrictRedis)
 def test_relatorio_geral_view_sem_cliente(client):
     response = client.get('/api/relatorio-geral/')
     assert response.status_code == 400

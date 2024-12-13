@@ -6,6 +6,9 @@ from .serializer import ClienteSerializer, TransacaoSerializer, GraficoLinhasSer
 from django.db.models import Sum, F, Q, functions
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
+from django.core.cache import cache
 
 
 class ClienteViewSet(viewsets.ModelViewSet):
@@ -18,6 +21,7 @@ class TransacaoViewSet(viewsets.ModelViewSet):
     serializer_class = TransacaoSerializer
 
 
+@method_decorator(cache_page(60 * 15), name='dispatch')
 class RelatorioGeralView(APIView):
     @swagger_auto_schema(
         manual_parameters=[
@@ -83,6 +87,12 @@ class GraficoLinhasView(APIView):
         serializer.is_valid(raise_exception=True)
         filtros = serializer.validated_data
 
+        cache_key = f"grafico-{filtros.get('cpf', 'all')}-{filtros.get('data_inicio', '')}-{filtros.get('data_fim', '')}"
+        cached_data = cache.get(cache_key)
+
+        if cached_data:
+            return Response(cached_data, status=200)
+
         if 'cpf' in filtros and filtros['cpf']:
             try:
                 cliente = Cliente.objects.get(cpf=filtros['cpf'])
@@ -120,5 +130,7 @@ class GraficoLinhasView(APIView):
                 'despesas': transacao['despesas'] or 0,
                 'saldo_acumulado': saldo_acumulado
             })
+
+        cache.set(cache_key, dados_grafico, timeout=60 * 15)
 
         return Response(dados_grafico, status=status.HTTP_200_OK)
