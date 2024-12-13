@@ -6,11 +6,14 @@ from .serializer import ClienteSerializer, TransacaoSerializer, GraficoLinhasSer
 from django.db.models import Sum, F, Q, functions
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 class ClienteViewSet(viewsets.ModelViewSet):
     queryset = Cliente.objects.all()
     serializer_class = ClienteSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['id', 'cpf', 'email', 'nome', 'telefone']
 
 
 class TransacaoViewSet(viewsets.ModelViewSet):
