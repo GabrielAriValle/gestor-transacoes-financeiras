@@ -17,12 +17,20 @@ def test_should_register_cliente(db, client):
     assert response.status_code == 201
 
 
-def test_shouldnt_delete_cliente(test_cliente, test_transacao):
+def test_should_delete_cliente(client, test_cliente):
+    response = client.delete(f"/api/clientes/{test_cliente.id}/")
+
+    assert response.status_code == 204
+
+
+def test_shouldnt_delete_cliente(client, test_cliente, test_transacao):
     test_transacao.cliente = test_cliente
     test_transacao.save()
 
-    with pytest.raises(ProtectedError):
-        test_cliente.delete()
+    response = client.delete(f"/api/clientes/{test_cliente.id}/")
+
+    assert response.status_code == 400
+    assert response.data['detail'] == "Nao e possível excluir este cliente, pois existem transacoes associadas."
 
 
 def test_shouldnt_register_cliente_cpf_invalido(db, client):

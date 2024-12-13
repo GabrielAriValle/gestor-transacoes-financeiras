@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Cliente, Transacao
 from .serializer import ClienteSerializer, TransacaoSerializer, GraficoLinhasSerializer
-from django.db.models import Sum, F, Q, functions
+from django.db.models import Sum, F, Q, functions, ProtectedError
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from django_filters.rest_framework import DjangoFilterBackend
@@ -14,6 +14,17 @@ class ClienteViewSet(viewsets.ModelViewSet):
     serializer_class = ClienteSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['id', 'cpf', 'email', 'nome', 'telefone']
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            self.perform_destroy(instance)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except ProtectedError:
+            return Response(
+                {"detail": "Nao e possível excluir este cliente, pois existem transacoes associadas."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
 
 class TransacaoViewSet(viewsets.ModelViewSet):

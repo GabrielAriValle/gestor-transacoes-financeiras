@@ -17,6 +17,7 @@ class TransacaoFactory(django.DjangoModelFactory):
 @pytest.fixture()
 def test_cliente(db):
     cliente = ClienteFactory.create(
+        id='1',
         nome='Fixture Teste',
         cpf='123.456.789-12',
         email='fixture@teste.com',
