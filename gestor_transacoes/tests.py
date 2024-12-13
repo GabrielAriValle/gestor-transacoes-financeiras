@@ -80,7 +80,7 @@ def test_relatorio_geral_view(client, test_cliente, test_transacao):
         categoria="lazer"
     )
 
-    response = client.get('/api/relatorio-geral/')
+    response = client.get(f'/api/relatorio-geral/?cpf={test_cliente.cpf}')
 
     assert response.status_code == 200
 

@@ -7,6 +7,9 @@ class Cliente(models.Model):
     email = models.EmailField(max_length=255, verbose_name="E-mail")
     telefone = models.CharField(max_length=20, blank=True, null=True)
 
+    def __str__(self):
+        return self.cpf
+
 
 class Transacao(models.Model):
     CATEGORIAS = [

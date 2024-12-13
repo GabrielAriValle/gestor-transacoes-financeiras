@@ -9,6 +9,8 @@ class ErrorSerializer(serializers.Serializer):
 
 
 class TransacaoSerializer(serializers.ModelSerializer):
+    cliente = serializers.SlugRelatedField(slug_field='cpf', queryset=Cliente.objects.all())
+
     class Meta:
         model = Transacao
         read_only_fields = []
