@@ -5,4 +5,5 @@ pytest-django==4.9.0
 pytest-cov==6.0.0
 pytest-xdist==3.6.1
 pytest-factoryboy==2.7.0
+drf-yasg==1.21.8
 flake8==7.1.1

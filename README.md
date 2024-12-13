@@ -6,8 +6,11 @@ Aplicação para cadastro de clientes e transaçõs para controle de gastos, pod
 ## Execução
 Rodar o projeto em container com: 
 ```shell
-docker compose up
+docker-compose up
 ```
 
 E acessar a interface em
 http://localhost:8000/api/
+
+Para a documentação da API:
+http://localhost:8000/swagger/
