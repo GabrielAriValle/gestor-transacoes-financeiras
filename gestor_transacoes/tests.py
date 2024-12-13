@@ -115,7 +115,7 @@ def test_grafico_linhas_view(client, test_cliente, test_transacao):
     assert response.status_code == 200
 
 
-def test_grafico_linhas_cliente_inexistente(client):
+def test_grafico_linhas_cliente_inexistente(db, client):
     params = {'cpf': '000.000.000-00'}
 
     response = client.get('/api/grafico-linhas/', params)
